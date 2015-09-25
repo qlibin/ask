@@ -1,0 +1,17 @@
+spring:
+  data:
+    mongodb:
+      database: "ask"
+      host: "localhost"
+      port: 27017
+#  dao:
+#    exceptiontranslation:
+#      enabled: false
+server:
+  port: 8080
+  address: "0.0.0.0"
+geoip:
+  telize:
+    url: "http://www.telize.com/geoip/{ip}"
+  defaultCountry: "lv"
+
