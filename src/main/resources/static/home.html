@@ -1,0 +1,35 @@
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Questions</h3>
+    </div>
+    <div class="panel-body">
+        <div ng-if="alerts">
+            <div class="alert alert-{{alert.type}}" role="alert" ng-repeat="alert in alerts">{{alert.text}}</div>
+        </div>
+        <div>
+            <form novalidate name="questionForm">
+                <div class="input-group">
+                    <input type="text" class="form-control" ng-model="newQuestionText" placeholder="Type here">
+                    <span class="input-group-btn">
+                        <input type="submit" class="btn btn-default" ng-click="ask(newQuestionText)" ng-disabled="questionForm.text.$dirty" value="Ask">
+                    </span>
+                </div><!-- /input-group -->
+            </form>
+        </div>
+        <div>
+            <ul class="list-group" ng-if="questions">
+                <li class="list-group-item" ng-repeat="question in questions">
+                    <span class="badge">{{question.country}}</span>
+                    {{question.text}}
+                </li>
+            </ul>
+            <nav>
+                <ul class="pager">
+                    <li ng-if="prev" class="previous"><a href="#/{{prev}}"><span aria-hidden="true">&larr;</span> Older</a></li>
+                    <li ng-if="next" class="next"><a href="#/{{next}}">Newer <span aria-hidden="true">&rarr;</span></a></li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>

@@ -3,6 +3,7 @@ package ask.controller;
 import ask.domain.Question;
 import ask.service.BlackListService;
 import ask.service.CountryService;
+import ask.service.QuestionLimitService;
 import ask.service.QuestionService;
 import com.google.common.base.Objects;
 import org.slf4j.Logger;
@@ -41,9 +42,14 @@ public class QuestionsController {
     @Autowired
     private BlackListService blackListService;
 
+    @Autowired
+    private QuestionLimitService questionLimitService;
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "/questions")
+    /*
+    list of questions
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/questions", produces = "application/json")
     public HttpEntity<PagedResources<Question>> questionList(
             @PageableDefault(sort = "lastUpdated", direction = Sort.Direction.DESC, value = 20)
             Pageable pageable,
@@ -54,8 +60,10 @@ public class QuestionsController {
     }
 
 
-
-    @RequestMapping(method = RequestMethod.GET, value = "/questions/{country:\\w{2}}")
+    /*
+    list questions by country
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/questions/{country:\\w{2}}", produces = "application/json")
     public HttpEntity<PagedResources<Question>> questionListByCountry(
             @PathVariable String country,
             @PageableDefault(sort = "lastUpdated", direction = Sort.Direction.DESC, value = 20)
@@ -68,7 +76,10 @@ public class QuestionsController {
 
 
 
-    @RequestMapping(method = RequestMethod.GET, value = "/questions/{id:.{16,}}")
+    /*
+    get question by id
+     */
+    @RequestMapping(method = RequestMethod.GET, value = "/questions/{id:.{16,}}", produces = "application/json")
     public HttpEntity<Question> getQuestion(@PathVariable String id) {
         Question question = questionService.getQuestion(id);
         if (question == null) {
@@ -80,13 +91,20 @@ public class QuestionsController {
 
 
 
-    @RequestMapping(method = RequestMethod.POST, value = "/questions")
+    /*
+    add new question
+     */
+    @RequestMapping(method = RequestMethod.POST, value = "/questions", produces = "application/json")
     public ResponseEntity<Question> createQuestion(@RequestBody QuestionRequest questionRequest, HttpServletRequest httpServletRequest) {
         return getQuestionResponseEntity(new Question(), questionRequest, httpServletRequest);
     }
 
 
-    @RequestMapping(method = RequestMethod.PUT, value = "/questions/{id}")
+
+    /*
+    change existing question
+     */
+    @RequestMapping(method = RequestMethod.PUT, value = "/questions/{id}", produces = "application/json")
     public ResponseEntity<Question> updateQuestion(@PathVariable String id, @RequestBody QuestionRequest questionRequest, HttpServletRequest httpServletRequest) {
         Question question = questionService.getQuestion(id);
         if (question == null) {
@@ -95,22 +113,50 @@ public class QuestionsController {
         return getQuestionResponseEntity(question, questionRequest, httpServletRequest);
     }
 
+
+    /**
+     * Saving and updating questions
+     * All validation is here
+     * @param question question pojo
+     * @param questionRequest posted question
+     * @param httpServletRequest http request
+     * @return response
+     */
     private ResponseEntity<Question> getQuestionResponseEntity(Question question, @RequestBody QuestionRequest questionRequest, HttpServletRequest httpServletRequest) {
         if (questionRequest.text == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+        // check if text contains blacklisted words
         if (!blackListService.check(questionRequest.text)) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw new BlackListException();
+        }
+        String country = countryService.detectCountry(httpServletRequest.getRemoteHost());
+        // check if limit for the country is exceeded
+        if (question.getId() == null && !questionLimitService.checkCountryLimit(country)) {
+            throw new CountryLimitException();
         }
         question.setText(questionRequest.text);
-        question.setCountry(countryService.detectCountry(httpServletRequest.getRemoteHost()));
-        // todo: check if limit for the country is exceeded
+        question.setCountry(country);
         questionService.saveQuestion(question);
         log.debug("New question: {}", question);
         return new ResponseEntity<>(question, HttpStatus.OK);
     }
 
 
+
+
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Country limit exceeded")
+    public static class CountryLimitException extends RuntimeException {
+    }
+
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST, reason="Inappropriate content")
+    public static class BlackListException extends RuntimeException {
+    }
+
+
+    /*
+    question request object
+     */
     public static class QuestionRequest {
         public String text;
 

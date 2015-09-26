@@ -40,14 +40,11 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
-    public void validateAndSaveQuestion(Question question) {
-//        Country
-    }
-
+    // todo: fix the cache eviction
     @Caching(evict = {
             @CacheEvict(value = "questionsById", key = "#a0.id"),
-            @CacheEvict(value = "listQuestions"),
-            @CacheEvict(value = "listQuestionsByCountry", key = "#a0.country")
+            @CacheEvict(value = "listQuestions", allEntries = true),
+            @CacheEvict(value = "listQuestionsByCountry", allEntries = true)
     })
     public void deleteQuestion(Question question) {
         if (question != null) {

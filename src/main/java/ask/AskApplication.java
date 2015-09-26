@@ -9,17 +9,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
-@EnableWebMvc
 @EnableMongoRepositories(
         createIndexesForQueryMethods = true
 )
 @EnableMongoAuditing(setDates = true)
-@EnableCaching(proxyTargetClass = false)
+//@EnableCaching(proxyTargetClass = false)
 @EnableSpringDataWebSupport
 public class AskApplication {
 

@@ -17,3 +17,8 @@ geoip:
     url: "http://www.telize.com/geoip/{ip}"
   defaultCountry: "lv"
 
+question:
+  limit:
+    byCountry:
+      count: 10
+      seconds: 1
