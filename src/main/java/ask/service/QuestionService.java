@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,12 +33,11 @@ public class QuestionService {
 
     @Caching(evict = {
             @CacheEvict(value = "questionsById", key = "#a0.id"),
-            @CacheEvict(value = "listAllQuestions"),
-            @CacheEvict(value = "listAllQuestionsByCountry", key = "#a0.country"),
-            @CacheEvict(value = "listValidQuestions")
+            @CacheEvict(value = "listQuestions"),
+            @CacheEvict(value = "listQuestionsByCountry", key = "#a0.country")
     })
-    public void saveQuestion(Question question) {
-        questionRepository.save(question);
+    public Question saveQuestion(Question question) {
+        return questionRepository.save(question);
     }
 
     public void validateAndSaveQuestion(Question question) {
@@ -45,32 +46,28 @@ public class QuestionService {
 
     @Caching(evict = {
             @CacheEvict(value = "questionsById", key = "#a0.id"),
-            @CacheEvict(value = "listAllQuestions"),
-            @CacheEvict(value = "listAllQuestionsByCountry", key = "#a0.country"),
-            @CacheEvict(value = "listValidQuestions")
+            @CacheEvict(value = "listQuestions"),
+            @CacheEvict(value = "listQuestionsByCountry", key = "#a0.country")
     })
     public void deleteQuestion(Question question) {
-        questionRepository.delete(question);
+        if (question != null) {
+            questionRepository.delete(question);
+        }
     }
 
-    @Cacheable(value = "listAllQuestions")
-    public List<Question> listAllQuestions() {
-        return questionRepository.findAll();
+    public void deleteQuestion(String id) {
+        Question question = getQuestion(id);
+        deleteQuestion(question);
     }
 
-    @Cacheable(value = "listAllQuestionsByCountry")
-    public List<Question> listAllQuestions(String country) {
-        return questionRepository.findAllByCountry(country);
+    @Cacheable(value = "listQuestions")
+    public Page<Question> listQuestions(Pageable pageable) {
+        return questionRepository.findAll(pageable);
     }
 
-    @Cacheable(value = "listValidQuestions")
-    public List<Question> listValidQuestions() {
-        return questionRepository.findAllByIsValid(true);
-    }
-
-    @Cacheable(value = "listValidQuestionsByCountry")
-    public List<Question> listValidQuestions(String country) {
-        return questionRepository.findAllByCountryAndIsValid(country, true);
+    @Cacheable(value = "listQuestionsByCountry")
+    public Page<Question> listQuestions(String country, Pageable pageable) {
+        return questionRepository.findAllByCountry(country, pageable);
     }
 
 }

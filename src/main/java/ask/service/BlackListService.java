@@ -1,9 +1,12 @@
 package ask.service;
 
 import ask.domain.BadWord;
+import ask.domain.Question;
 import ask.repository.BadWordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -23,11 +26,24 @@ public class BlackListService {
     @Autowired
     private BadWordRepository badWordRepository;
 
+    @Caching(evict = {
+            @CacheEvict(value = "blackList")
+    })
+    public BadWord add(String word) {
+
+        BadWord badWord = badWordRepository.findByWord(word);
+        if (badWord == null) {
+            badWord = badWordRepository.save(BadWord.fromWord(word));
+        }
+        return badWord;
+
+    }
+
     /**
      * Cacheable black list
      * @return set of bad words
      */
-    @Cacheable(value = "bkackList")
+    @Cacheable(value = "blackList")
     public Set<String> blackList() {
         Set<String> result = new HashSet<>();
         List<BadWord> badWords = badWordRepository.findAll();
@@ -46,7 +62,7 @@ public class BlackListService {
             String[] words = splitWords(text);
             for (String word : words) {
                 if (blackList.contains(word)) {
-                    return true;
+                    return false;
                 }
             }
         }

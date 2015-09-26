@@ -35,6 +35,9 @@ public class CountryService {
      */
     public String detectCountry(String ip) {
         try {
+            if ("127.0.0.1".equals(ip)) {
+                return "lv"; // for test purposes
+            }
             GeoIpResponse geoIpResponse = geoIpService.getGeoIpData(ip);
             String country = geoIpResponse.getCountry_code();
             if (StringUtils.hasText(country)) {

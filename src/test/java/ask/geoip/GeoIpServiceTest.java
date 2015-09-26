@@ -26,17 +26,24 @@ public class GeoIpServiceTest {
 
     @Test
     public void testGetGeoIpData() throws Exception {
-        GeoIpResponse data = geoIpService.getGeoIpData("8.8.8.8");
-
-        Assert.assertEquals("8.8.8.8", data.getIp());
-        Assert.assertEquals("Mountain View", data.getCity());
-
         try {
-            geoIpService.getGeoIpData("wrong IP");
-            Assert.assertTrue("Wrong IP request should fail", false);
+
+            GeoIpResponse data = geoIpService.getGeoIpData("8.8.8.8");
+
+            Assert.assertEquals("8.8.8.8", data.getIp());
+            Assert.assertEquals("Mountain View", data.getCity());
+
+            try {
+                geoIpService.getGeoIpData("wrong IP");
+                Assert.assertTrue("Wrong IP request should fail", false);
+            } catch (IOException e) {
+                Assert.assertTrue(e.getMessage().contains("Incorrect server response status"));
+            }
+
         } catch (IOException e) {
-            Assert.assertTrue(e.getMessage().contains("Incorrect server response status"));
+            Assert.assertTrue("general connectivity issue is possible", e.getMessage().contains("General connectivity problem"));
         }
+
 
     }
 }

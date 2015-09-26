@@ -11,4 +11,7 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public interface BadWordRepository extends MongoRepository<BadWord, String> {
+
+    BadWord findByWord(String word);
+
 }

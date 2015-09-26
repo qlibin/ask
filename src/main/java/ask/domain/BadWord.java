@@ -1,5 +1,6 @@
 package ask.domain;
 
+import com.google.common.base.Objects;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
@@ -9,6 +10,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document(collection = "bad_words")
 public class BadWord extends AbstractEntity {
+    public BadWord() {
+    }
+    public BadWord(String word) {
+        this.word = word;
+    }
 
     private String word;
 
@@ -18,6 +24,17 @@ public class BadWord extends AbstractEntity {
 
     public void setWord(String word) {
         this.word = word;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("word", word)
+                .toString();
+    }
+
+    public static BadWord fromWord(String word) {
+        return new BadWord(word);
     }
 
 }

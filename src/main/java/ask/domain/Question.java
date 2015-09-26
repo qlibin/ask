@@ -13,8 +13,6 @@ public class Question extends AbstractEntity {
 
     private String text;
 
-    private boolean isValid;
-
     private String country;
 
     public String getText() {
@@ -23,14 +21,6 @@ public class Question extends AbstractEntity {
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public boolean getValid() {
-        return isValid;
-    }
-
-    public void setValid(boolean valid) {
-        isValid = valid;
     }
 
     public String getCountry() {
@@ -45,7 +35,6 @@ public class Question extends AbstractEntity {
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("text", text)
-                .add("isValid", isValid)
                 .add("country", country)
                 .toString();
     }

@@ -1,10 +1,13 @@
 package ask;
 
-import ask.repository.BadWordRepository;
+import ask.service.BlackListService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by alibin on 9/25/15.
@@ -15,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
     @Autowired
-    private BadWordRepository badWordRepository;
+    private BlackListService blackListService;
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
@@ -26,7 +29,11 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
 
     private void initBadWords() {
 
-        // todo: init black list of words
+        // init black list of words
+        List<String> badWords = Arrays.asList(
+                "fuck", "shit"
+        );
+        badWords.stream().forEach(s -> blackListService.add(s));
 
     }
 }

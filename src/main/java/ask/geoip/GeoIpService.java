@@ -4,6 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ExceptionDepthComparator;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,14 +35,18 @@ public class GeoIpService {
 
     @Cacheable(value = "getGeoIpData")
     public GeoIpResponse getGeoIpData(String ip) throws IOException {
-        ResponseEntity<GeoIpResponse> response =
-                getRestTemplate().exchange(
-                        geoIpServiceUrl,
-                        HttpMethod.GET,
-                        null,
-                        GeoIpResponse.class,
-                        ip
-                );
+        ResponseEntity<GeoIpResponse> response;
+        try {
+            response = getRestTemplate().exchange(
+                    geoIpServiceUrl,
+                    HttpMethod.GET,
+                    null,
+                    GeoIpResponse.class,
+                    ip
+            );
+        } catch (Exception e) {
+            throw new IOException("General connectivity problem", e);
+        }
         if (response.getStatusCode() != HttpStatus.OK) {
             throw new IOException("Incorrect server response status " + response.getStatusCode());
         }

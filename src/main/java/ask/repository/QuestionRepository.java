@@ -1,10 +1,10 @@
 package ask.repository;
 
 import ask.domain.Question;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * Created by alibin on 9/24/15.
@@ -14,10 +14,8 @@ import java.util.List;
 @Component
 public interface QuestionRepository extends MongoRepository<Question, String> {
 
-    List<Question> findAllByIsValid(boolean isValid);
+    Page<Question> findAllByCountry(String country, Pageable pageable);
 
-    List<Question> findAllByCountry(String country);
-
-    List<Question> findAllByCountryAndIsValid(String country, boolean isValid);
+    Long deleteByText(String text);
 
 }
