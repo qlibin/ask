@@ -20,6 +20,9 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     @Autowired
     private BlackListService blackListService;
 
+    @Autowired
+    private QuestionLimitSettings questionLimitSettings;
+
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
@@ -30,9 +33,13 @@ public class Bootstrap implements ApplicationListener<ContextRefreshedEvent> {
     private void initBadWords() {
 
         // init black list of words
-        List<String> badWords = Arrays.asList(
-                "fuck", "shit"
-        );
+
+        List<String> badWords = questionLimitSettings.getBlacklist();
+        if (badWords == null || badWords.isEmpty()) {
+            badWords = Arrays.asList(
+                    "fuck", "shit"
+            );
+        }
         badWords.stream().forEach(s -> blackListService.add(s));
 
     }

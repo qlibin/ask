@@ -21,3 +21,38 @@ Create a tiny RESTful web service with the following business requirements:
 
     $ mvn clean spring-boot:run -Dserver.port=8080
     
+
+### Settings
+
+Properties are in src/main/resources/application.yml
+
+Mongo db access:
+
+    spring:
+      data:
+        mongodb:
+          database: "ask"
+          host: "localhost"
+          port: 27017
+
+Http server listening options:
+
+    server:
+      port: 8080
+      address: "0.0.0.0"
+
+Geo IP service settings:
+
+    geoip:
+      telize:
+        url: "http://www.telize.com/geoip/{ip}"
+      defaultCountry: "lv"
+
+Country limit settings and blacklist of words:
+
+    question:
+      limit:
+        byCountry:
+          count: 10
+          seconds: 1
+        blacklist: [fuck, shit, badword1, badword2, badword3]

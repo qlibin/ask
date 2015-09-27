@@ -4,6 +4,8 @@ spring:
       database: "ask"
       host: "localhost"
       port: 27017
+#      username:
+#      password:
 #  dao:
 #    exceptiontranslation:
 #      enabled: false
@@ -22,3 +24,4 @@ question:
     byCountry:
       count: 10
       seconds: 1
+    blacklist: [fuck, shit, badword1, badword2, badword3]
