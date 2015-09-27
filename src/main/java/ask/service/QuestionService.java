@@ -33,14 +33,13 @@ public class QuestionService {
 
     @Caching(evict = {
             @CacheEvict(value = "questionsById", key = "#a0.id"),
-            @CacheEvict(value = "listQuestions"),
-            @CacheEvict(value = "listQuestionsByCountry", key = "#a0.country")
+            @CacheEvict(value = "listQuestions", allEntries = true),
+            @CacheEvict(value = "listQuestionsByCountry", allEntries = true)
     })
     public Question saveQuestion(Question question) {
         return questionRepository.save(question);
     }
 
-    // todo: fix the cache eviction
     @Caching(evict = {
             @CacheEvict(value = "questionsById", key = "#a0.id"),
             @CacheEvict(value = "listQuestions", allEntries = true),

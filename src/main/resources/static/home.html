@@ -7,7 +7,7 @@
         <div ng-if="alerts">
             <div class="alert alert-{{alert.type}}" role="alert" ng-repeat="alert in alerts">{{alert.text}}</div>
         </div>
-        <div>
+        <div style="margin-bottom: 1em;">
             <form novalidate name="questionForm">
                 <div class="input-group">
                     <input type="text" class="form-control" ng-model="newQuestionText" placeholder="Type here">

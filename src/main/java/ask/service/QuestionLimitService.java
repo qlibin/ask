@@ -33,9 +33,24 @@ public class QuestionLimitService {
     public boolean checkCountryLimit(String country) {
         if (count > 0) {
             Date after = DateUtils.addSeconds(new Date(), -seconds);
-            return questionRepository.countByCountryAndCreatedAfter(country, after) <= count;
+            return questionRepository.countByCountryAndCreatedAfter(country, after) < count;
         }
         return true;
     }
 
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public int getSeconds() {
+        return seconds;
+    }
+
+    public void setSeconds(int seconds) {
+        this.seconds = seconds;
+    }
 }

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit;
         createIndexesForQueryMethods = true
 )
 @EnableMongoAuditing(setDates = true)
-//@EnableCaching(proxyTargetClass = false)
+@EnableCaching
 @EnableSpringDataWebSupport
 public class AskApplication {
 

@@ -24,9 +24,8 @@ angular.module('ask', [ 'ngRoute' ])
         };
         $scope.ask = function ask(text) {
             $http.post('/api/questions', {text: text}).then(function (response) {
-                //$route.updateParams({});
-                //$scope.load();
-                $location.path('/');
+                $location.path('/page/0');
+                $scope.load();
                 $scope.newQuestionText = '';
             }, function (response) {
                 console.log('error posting question', response);
